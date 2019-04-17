@@ -1,0 +1,73 @@
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+struct process
+{
+  /* Values initialized for each process */
+  int arrivaltime;  /* Time process arrives and wishes to start */
+  int runtime;      /* Time process requires to complete job */
+  int priority;     /* Priority of the process */
+
+  /* Values algorithm may use to track processes */
+  int starttime;
+  int endtime;
+  int flag;
+  int remainingtime;
+
+};
+void shortest_remaining_time(struct process *proc);
+void round_robin_priority(struct process *proc);
+int main()
+{
+  int i;
+  struct process proc[NUM_PROCESSES],      /* List of processes sorted based on arrival time */
+                 proc_copy[NUM_PROCESSES]; /* Processes  backup*/
+int arrivaltime[NUM_PROCESSES];
+  for(i=0; i<NUM_PROCESSES; i++)
+  {
+     int rand;
+    int arrivaltime = rand()%100;
+    //Sort the processes
+    int j;
+    for (j=0;j<i;j++){
+      if (proc[j].arrivaltime > arrivaltime){
+        //shift the rest of the processes to the right one
+        for (int k = i; k > j; k--){
+            proc[k]=proc[k-1];
+        }
+break;
+ }
+    }
+    int remainingtime = (rand()%30)+10;
+    proc[j].arrivaltime = arrivaltime;
+    proc[j].runtime = remainingtime;
+    proc[j].priority = rand()%3;
+    proc[j].starttime = 0;
+    proc[j].endtime = 0;
+    proc[j].flag = 0;
+    proc[j].remainingtime = remainingtime;
+  }
+  for (int i=0;i<NUM_PROCESSES;i++){
+    printf("%d REmaining %d\n", i, proc[i].remainingtime);
+  }
+
+  /* Show process values */
+  printf("Process\arrival\runtime\priority\n");
+  for(i=0; i<NUM_PROCESSES; i++)
+    printf("%d\t%d\t%d\t%d\n", i, proc[i].arrivaltime, proc[i].runtime,
+           proc[i].priority);
+
+printf("\n\nShortest remaining time\n");
+  memcpy(proc_copy, proc, NUM_PROCESSES * sizeof(struct process));
+  shortest_remaining_time(proc_copy);
+
+printf("\n\nRound Robin with priority\n");
+  memcpy(proc_copy, proc, NUM_PROCESSES * sizeof(struct process));
+  for (int i=0;i<NUM_PROCESSES;i++){
+    printf("%d REmaining %d\n", i, proc_copy[i].remainingtime);
+  }
+  round_robin_priority(proc_copy);
+
+
+  return 0;
+}
